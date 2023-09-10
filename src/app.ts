@@ -1,4 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
+import AppError from './utils/appError';
+import globalErrorHandler from './controllers/errorController';
 
 const app = express();
 
@@ -9,8 +11,11 @@ import userRoutes from './routes/userRoute';
 
 app.use('/api/v1/user', userRoutes);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json({ message: err.message });
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
+  const message: string = `${req.originalUrl} route cannot be found on this server`;
+  return next(new AppError(message, 404));
 });
+
+app.use(globalErrorHandler.globalSendError);
 
 export default app;
