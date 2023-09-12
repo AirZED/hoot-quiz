@@ -53,13 +53,27 @@ class AuthController {
 
   protect: RequestHandler = catchAsync(
     async (req, res, next): Promise<void> => {
-      console.log(req.headers);
-
       // check the headers bearer token
+      let token: string | undefined;
+
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[0];
+      }
+
+      if (!token) {
+        return next(new AppError('Provide token in header', 404));
+      }
+
       // confirm if the token is valid
+      const decoded = jwt.verify(token , process.env.JWT_SECRET || '');
+
+     
+        // console.log(decoded.iat);
+      
+
       // confirm is the user is still valid
       // confirm if user changed password between this time
-      res.send('some food');
+      next();
     },
   );
 
@@ -70,4 +84,4 @@ class AuthController {
     });
 }
 
-export default AuthController;
+export default new AuthController();

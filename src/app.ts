@@ -7,9 +7,11 @@ const app = express();
 // parse the body
 app.use(express.json({ limit: '10kb' }));
 
-import userRoutes from './routes/userRoute';
+import userRoute from './routes/userRoute';
+import questionRoute from './routes/questionRoute';
 
-app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/user', userRoute);
+app.use('/api/v1/question', questionRoute);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   const message: string = `${req.originalUrl} route cannot be found on this server`;

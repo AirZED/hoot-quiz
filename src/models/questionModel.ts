@@ -3,8 +3,8 @@ import validator from 'validator';
 
 export interface IQuestion extends Document {
   question: String;
-  options: String[] | number[] | boolean[];
-  answer: String | number | boolean;
+  options: (string | number | boolean)[];
+  answer: string | number | boolean;
 }
 
 const questionSchema = new mongoose.Schema<IQuestion>(
@@ -17,11 +17,20 @@ const questionSchema = new mongoose.Schema<IQuestion>(
       type: [{ type: String || Number, trim: true }],
       validate: {
         validator: function (this: IQuestion, options: any): boolean {
-          return options.length <= 4;
+          return options.length <= 4 && options.length > 1;
         },
         message: 'Options must not be more than 4',
       },
       required: [true, 'Question must have options'],
+    },
+    answer: {
+      type: String || Number,
+      validate: {
+        validator: function (this: IQuestion, val: string | number | boolean) {
+          return this.options.includes(val);
+        },
+        message: 'Answer must be included in options',
+      },
     },
   },
   {
@@ -30,3 +39,7 @@ const questionSchema = new mongoose.Schema<IQuestion>(
     toObject: { virtuals: true },
   },
 );
+
+const Question = mongoose.model('Question', questionSchema);
+
+export default Question;
