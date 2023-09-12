@@ -1,5 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcrypt';
 
 enum UserRole {
   ADMIN = 'admin',
@@ -11,9 +12,10 @@ export interface IUser extends Document {
   name: String;
   email: string;
   password: string;
-  passwordConfirm: string;
+  passwordConfirm: string | undefined;
   passwordResetAt: Date;
   role: UserRole;
+  comparePassword: (b: string) => Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -56,6 +58,19 @@ const userSchema = new mongoose.Schema<IUser>(
     toObject: { virtuals: true },
   },
 );
+
+userSchema.pre('save', async function (this: IUser, next) {
+  if (!this.isNew || !this.isModified('password')) {
+    return next();
+  }
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+});
+
+userSchema.methods.comparePassword = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+};
 
 const User = mongoose.model<IUser>('User', userSchema);
 export default User;

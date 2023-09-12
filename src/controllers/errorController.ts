@@ -35,11 +35,9 @@ class ErrorController {
         error = this.hendleJWTError();
       } else if (err.name === 'TokenExpiredError') {
         error = this.handleJWTExpireError();
-      } else {
-        error = new AppError('Unhandled error', 500);
       }
 
-      return this.sendProdError(error, res);
+      return this.sendProdError(error || err, res);
     }
   };
 
