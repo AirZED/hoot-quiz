@@ -4,6 +4,10 @@ import AppError from '../utils/appError';
 import catchAsync from '../utils/catchAsync';
 import jwt from 'jsonwebtoken';
 
+interface verifyType {
+  token: string;
+  secretOrPublicKey: string;
+}
 class AuthController {
   signToken = (id: string) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || '', {
@@ -35,10 +39,14 @@ class AuthController {
   login: RequestHandler = catchAsync(async (req, res, next): Promise<void> => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select('+password');
-    const isValid = await user!.comparePassword(password);
+    //check if email and password is valid
+    if (!email || !password) {
+      return next(new AppError('Please provide a password and an email', 400));
+    }
 
-    if (!user || !isValid) {
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user || !(await user!.comparePassword(password))) {
       return next(new AppError('User email or password is invalid', 404));
     }
 
@@ -56,20 +64,21 @@ class AuthController {
       // check the headers bearer token
       let token: string | undefined;
 
-      if (req.headers.authorization) {
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+      ) {
         token = req.headers.authorization.split(' ')[0];
       }
 
       if (!token) {
         return next(new AppError('Provide token in header', 404));
       }
+      const decoded = await jwt.verify(token, process.env.JWT_SECRET || '');
 
-      // confirm if the token is valid
-      const decoded = jwt.verify(token , process.env.JWT_SECRET || '');
+      console.log(decoded);
 
-     
-        // console.log(decoded.iat);
-      
+      // console.log(decoded.iat);
 
       // confirm is the user is still valid
       // confirm if user changed password between this time

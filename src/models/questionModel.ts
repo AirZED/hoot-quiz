@@ -5,10 +5,21 @@ export interface IQuestion extends Document {
   question: String;
   options: (string | number | boolean)[];
   answer: string | number | boolean;
+  owner: typeof mongoose.Schema.ObjectId;
+  sessionId: string;
 }
 
 const questionSchema = new mongoose.Schema<IQuestion>(
   {
+    owner: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Question require an owner'],
+    },
+    sessionId: {
+      type: String,
+      required: [true, 'Questions must have a session'],
+    },
     question: {
       type: String,
       required: [true, 'Question must have a question'],
