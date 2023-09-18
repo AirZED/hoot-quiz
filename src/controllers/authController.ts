@@ -1,13 +1,15 @@
-import { RequestHandler } from 'express';
+import { RequestHandler, Request, Response, NextFunction } from 'express';
 import User, { IUser } from '../models/userModel';
 import AppError from '../utils/appError';
 import catchAsync from '../utils/catchAsync';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import sendEmail from '../utils/email';
+import crypto from 'crypto';
 
-interface verifyType {
-  token: string;
-  secretOrPublicKey: string;
+export interface CustomRequest extends Request {
+  user?: IUser;
 }
+
 class AuthController {
   signToken = (id: string) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || '', {
@@ -59,8 +61,79 @@ class AuthController {
     });
   });
 
-  protect: RequestHandler = catchAsync(
+  forgetPassword: RequestHandler = catchAsync(
     async (req, res, next): Promise<void> => {
+      // forget password
+      const { email } = req.body;
+
+      // find account to confirm availability
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return next(new AppError('Please, input valid email', 400));
+      }
+
+      const resetToken = user.sendPasswordResetToken();
+      await user.save({ validateBeforeSave: false });
+
+      const resetUrl = `${req.protocol}://${req.get(
+        'host',
+      )}/api/v1/user/resetPassword/${resetToken}`;
+
+      const message = `Forget your password, Visit this link to reset your password : ${resetUrl} \nIf you didnt forget your password, ignore this email`;
+
+      try {
+        await sendEmail({
+          email: user.email,
+          subject: 'Reset Password',
+          message,
+        });
+
+        res.status(201).json({
+          status: 'success',
+          message: 'Password reset token sent successfully',
+        });
+      } catch (err) {
+        res
+          .status(400)
+          .json({ message: 'There was an error, try again', status: 'error' });
+      }
+    },
+  );
+
+  resetPassword: RequestHandler = catchAsync(
+    async (req, res, next): Promise<void> => {
+      // confirm the reset Token
+
+      const { password, passwordConfirm } = req.body;
+
+      const { resetToken } = req.params;
+
+      const passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+      const user = await User.findOne({ passwordResetToken });
+
+      if (!user || !user.checkResetTokenExpiration()) {
+        return next(new AppError('Invalid or expired reset Token', 400));
+      }
+
+      user.password = password;
+      user.passwordConfirm = passwordConfirm;
+      user.passwordResetToken = undefined;
+      user.passwordResetTokenExpireTime = undefined;
+      await user.save();
+
+      res.status(201).json({
+        message: 'success',
+      });
+    },
+  );
+
+  protect: RequestHandler = catchAsync(
+    async (req: CustomRequest, res, next): Promise<void> => {
       // check the headers bearer token
       let token: string | undefined;
 
@@ -68,28 +141,52 @@ class AuthController {
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
       ) {
-        token = req.headers.authorization.split(' ')[0];
+        token = req.headers.authorization.split(' ')[1];
       }
 
       if (!token) {
         return next(new AppError('Provide token in header', 404));
       }
-      const decoded = await jwt.verify(token, process.env.JWT_SECRET || '');
 
-      console.log(decoded);
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || '',
+      ) as JwtPayload;
 
-      // console.log(decoded.iat);
+      const user = await User.findOne({ _id: decoded.id });
 
-      // confirm is the user is still valid
-      // confirm if user changed password between this time
+      if (!user) {
+        return next(new AppError('The user does not exist', 400));
+      }
+
+      const isChangePassword = user.checkPasswordChange(decoded.iat as number);
+
+      console.log(isChangePassword);
+
+      if (isChangePassword) {
+        return next(
+          new AppError(
+            'This user is a fraud, password was changed amidst request',
+            400,
+          ),
+        );
+      }
+
+      req.user = user;
       next();
     },
   );
 
-  restrictTo: RequestHandler = (...roles) =>
-    catchAsync(async (req, res, next): Promise<void> => {
-      // Check user type and allow certain previledges
-      res.send('I live alone');
+  restrictTo = (...roles: string[]): RequestHandler =>
+    catchAsync(async (req: CustomRequest, res, next): Promise<void> => {
+      if (!roles.includes(req.user?.role as string)) {
+        res.status(402).json({
+          message: 'Does not have permission to access resource',
+          status: 'failed',
+        });
+      }
+
+      next();
     });
 }
 

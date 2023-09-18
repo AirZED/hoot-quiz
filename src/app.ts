@@ -1,8 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/errorController';
+import morgan from 'morgan';
 
 const app = express();
+
+// log morgan
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 // parse the body
 app.use(express.json({ limit: '10kb' }));

@@ -9,7 +9,7 @@ router.use(authController.protect);
 router
   .route('/')
   .get(questionController.getAllQuestions)
-  .post(questionController.addQuestion);
+  .post(authController.restrictTo('user'), questionController.addQuestion);
 
 router
   .route('/:id')

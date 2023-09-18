@@ -1,6 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 enum UserRole {
   ADMIN = 'admin',
@@ -15,8 +16,14 @@ export interface IUser extends Document {
   passwordConfirm: string | undefined;
   passwordResetAt: Date;
   role: UserRole;
-  comparePassword: (b: string) => Promise<boolean>;
+  comparePassword: (password: string) => Promise<boolean>;
   sessionIds: string[];
+  compareResetPasswordTime: (time: Date) => boolean;
+  passwordResetToken: string | undefined;
+  passwordResetTokenExpireTime: Date | undefined;
+  sendPasswordResetToken: () => string;
+  checkResetTokenExpiration: () => boolean;
+  checkPasswordChange: (time: number) => boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -55,6 +62,8 @@ const userSchema = new mongoose.Schema<IUser>(
       type: [String],
       default: [],
     },
+    passwordResetToken: String,
+    passwordResetTokenExpireTime: Date,
   },
 
   {
@@ -64,17 +73,51 @@ const userSchema = new mongoose.Schema<IUser>(
   },
 );
 
-userSchema.pre('save', async function (this: IUser, next) {
-  if (!this.isNew || !this.isModified('password')) {
+userSchema.pre('save', async function (this: IUser & Document, next) {
+  if (!this.isModified('password')) {
     return next();
   }
 
-  this.password = await bcrypt.hash(this.password, 12);
+  const hashPassword = await bcrypt.hash(this.password, 12);
+  this.password = hashPassword;
   this.passwordConfirm = undefined;
+
+  next();
 });
 
+userSchema.pre('save', async function (this: IUser & Document, next) {
+  if (this.isNew || !this.isModified('password')) {
+    return next();
+  }
+  this.passwordResetAt = new Date(Date.now());
+  next();
+});
 userSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.compareResetPasswordTime = async function (time: Date) {};
+
+// Send reset password Token
+userSchema.methods.sendPasswordResetToken = function (this: IUser) {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  // hash to token that is sent to the database
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // creating a token expire time 5 mins after it was created
+  this.passwordResetTokenExpireTime = new Date(Date.now() + 5 * 60 * 1000);
+  return resetToken;
+};
+
+userSchema.methods.checkResetTokenExpiration = function () {
+  return Date.now() < this.passwordResetTokenExpireTime;
+};
+
+userSchema.methods.checkPasswordChange = function (JWTExpireTime: number) {
+  return new Date(this.passwordResetAt).getTime() / 1000 > JWTExpireTime;
 };
 
 const User = mongoose.model<IUser>('User', userSchema);
