@@ -145,7 +145,7 @@ class AuthController {
       }
 
       if (!token) {
-        return next(new AppError('Provide token in header', 404));
+        return next(new AppError('auth token not available in header', 404));
       }
 
       const decoded = jwt.verify(
