@@ -4,10 +4,9 @@ export interface ISession extends Document {
   startTime: Date;
   endTime: Date;
   creatorId: typeof mongoose.Schema.ObjectId;
-  questions: [typeof mongoose.Schema.ObjectId];
 }
 
-const sessionSchema = new mongoose.Schema(
+const sessionSchema = new mongoose.Schema<ISession>(
   {
     startTime: {
       type: Date,
@@ -22,10 +21,6 @@ const sessionSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'A session needs a creator Id'],
     },
-    questions: {
-      type: [mongoose.Schema.ObjectId],
-      ref: 'Question',
-    },
   },
   {
     timestamps: true,
@@ -34,6 +29,6 @@ const sessionSchema = new mongoose.Schema(
   },
 );
 
-const Session = mongoose.model('Session', sessionSchema);
+const Session = mongoose.model<ISession>('Session', sessionSchema);
 
 export default Session;
