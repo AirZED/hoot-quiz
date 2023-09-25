@@ -161,8 +161,6 @@ class AuthController {
 
       const isChangePassword = user.checkPasswordChange(decoded.iat as number);
 
-      console.log(isChangePassword);
-
       if (isChangePassword) {
         return next(
           new AppError(

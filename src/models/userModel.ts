@@ -17,7 +17,6 @@ export interface IUser extends Document {
   passwordResetAt: Date;
   role: UserRole;
   comparePassword: (password: string) => Promise<boolean>;
-  sessionIds: string[];
   compareResetPasswordTime: (time: Date) => boolean;
   passwordResetToken: string | undefined;
   passwordResetTokenExpireTime: Date | undefined;
@@ -58,10 +57,7 @@ const userSchema = new mongoose.Schema<IUser>(
       default: UserRole.USER,
     },
     passwordResetAt: Date,
-    sessionIds: {
-      type: [String],
-      default: [],
-    },
+    
     passwordResetToken: String,
     passwordResetTokenExpireTime: Date,
   },
