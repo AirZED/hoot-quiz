@@ -2,12 +2,11 @@
   "name": "hot-quiz",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon dist/server.js",
-    "dev": "nodemon dist/server.js",
-    "start:prod": "set NODE_ENV=production&& nodemon dist/server.js"
+    "dev": "ts-node src/server.ts",
+    "start:prod": "set NODE_ENV=production&& node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.5",
     "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
     "validator": "^13.11.0",
     "xss-clean": "^0.1.4"
   },

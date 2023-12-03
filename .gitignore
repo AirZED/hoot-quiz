@@ -4,3 +4,50 @@ build
 package-lock.json
 
 config.env
+
+
+# Node.js
+node_modules/
+
+# .next directory
+.next/
+
+# Production build
+out/
+
+# Visual Studio Code
+.vscode/
+
+# Logs
+*.log
+
+# Environment variables
+.env.local
+.env.development
+.env.test
+.env.production
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Next.js build artifacts
+/.next
+/.vercel
+
+# npm package manager
+npm-debug.log
+yarn-error.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# files created by npm
+*.tgz
+*.zip

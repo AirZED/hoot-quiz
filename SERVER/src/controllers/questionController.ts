@@ -4,7 +4,6 @@ import AppError from '../utils/appError';
 import Question, { IQuestion } from '../models/questionModel';
 import catchAsync from '../utils/catchAsync';
 import { CustomRequest } from './authController';
-import { networkInterfaces } from 'os';
 
 class QuestionController {
   addQuestion: RequestHandler = catchAsync(
