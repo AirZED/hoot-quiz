@@ -3,7 +3,7 @@ build
 /dist
 package-lock.json
 
-config.env
+.env
 
 
 # Node.js
