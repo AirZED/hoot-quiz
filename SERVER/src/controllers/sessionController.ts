@@ -3,6 +3,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import { RequestHandler } from 'express';
 import { CustomRequest } from './authController';
+import sendReponse from '../utils/sendReponse';
 
 class SessionController {
   startSession: RequestHandler = catchAsync(async (req, res, next) => {
@@ -23,6 +24,8 @@ class SessionController {
     session.active = true;
     await session.save();
     // start the socket connection and allow people to join
+
+    sendReponse(res, 201, session);
   });
   getAllSessions: RequestHandler = catchAsync(
     async (req: CustomRequest, res, next) => {
@@ -33,7 +36,7 @@ class SessionController {
         return next(new AppError('Session not found', 404));
       }
 
-      res.status(200).json({ status: 'success', sessions });
+      sendReponse(res, 200, sessions);
     },
   );
   getSession: RequestHandler = catchAsync(
@@ -50,7 +53,7 @@ class SessionController {
         return next(new AppError('Session not found', 404));
       }
 
-      res.status(200).json({ status: 'success', session });
+      sendReponse(res, 200, session);
     },
   );
 
@@ -69,10 +72,7 @@ class SessionController {
         return next(new AppError('Session not found', 404));
       }
 
-      res.status(201).json({
-        status: 'success',
-        session,
-      });
+      sendReponse(res, 201, session);
     },
   );
   addSession: RequestHandler = catchAsync(
@@ -90,20 +90,13 @@ class SessionController {
         return next(new AppError('Session creation otilored', 400));
       }
 
-      res.status(201).json({
-        status: 'success',
-        session,
-      });
+      sendReponse(res, 201, session);
     },
   );
 
   deleteSession: RequestHandler = catchAsync(async (req, res, next) => {
     await Session.findByIdAndDelete(req.params.id);
-
-    res.status(204).json({
-      status: 'success',
-      data: null,
-    });
+    sendReponse(res, 204, null);
   });
 }
 
