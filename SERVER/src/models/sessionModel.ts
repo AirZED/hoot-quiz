@@ -4,6 +4,7 @@ export interface ISession extends Document {
   startTime: Date;
   endTime: Date;
   creatorId: typeof mongoose.Schema.ObjectId;
+  active: boolean;
 }
 
 const sessionSchema = new mongoose.Schema<ISession>(
@@ -21,6 +22,7 @@ const sessionSchema = new mongoose.Schema<ISession>(
       ref: 'User',
       required: [true, 'A session needs a creator Id'],
     },
+    active: Boolean,
   },
   {
     timestamps: true,

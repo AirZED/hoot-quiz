@@ -8,6 +8,8 @@ import authController from '../controllers/authController';
 
 // restrict to only signed in users
 router.use(authController.protect, authController.restrictTo('user'));
+
+router.route('/start/:id').post(sessionController.startSession);
 router
   .route('/')
   .get(sessionController.getAllSessions)
