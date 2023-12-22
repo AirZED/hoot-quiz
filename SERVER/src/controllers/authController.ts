@@ -174,6 +174,10 @@ class AuthController {
       next();
     },
   );
+  // send refresh token
+  refreshToken: RequestHandler = catchAsync(async (req, res, next) => {
+    console.log('This endpoint recieved a hit');
+  });
 
   restrictTo = (...roles: string[]): RequestHandler =>
     catchAsync(async (req: CustomRequest, res, next): Promise<void> => {

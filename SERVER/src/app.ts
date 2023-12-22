@@ -21,6 +21,10 @@ app.use('/api/v1/user', userRoute);
 app.use('/api/v1/question', questionRoute);
 app.use('/api/v1/session', sessionRoute);
 
+app.get('/', (req: Request, res: Response) => {
+  res.send('api is running on live port');
+});
+
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   const message: string = `${req.originalUrl} route cannot be found on this server`;
   return next(new AppError(message, 404));
