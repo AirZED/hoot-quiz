@@ -22,7 +22,10 @@ db();
 // test websocket connection
 io.on('connection', (socket) => {
   console.log('a user connected');
-  // Add your WebSocket logic here
+
+  socket.on('sendMessage', (message) => {
+    console.log('Received message:', message);
+  });
 });
 
 httpServer.listen(port, () => {
