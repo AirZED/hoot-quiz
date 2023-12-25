@@ -7,13 +7,13 @@ import sessionController from '../controllers/sessionController';
 import authController from '../controllers/authController';
 
 // restrict to only signed in users
-router.use(authController.protect, authController.restrictTo('user'));
+// router.use(authController.protect, authController.restrictTo('user'));
 
 router.route('/start/:id').post(sessionController.startSession);
 router
   .route('/')
   .get(sessionController.getAllSessions)
-  .post(sessionController.addSession);
+  .post(sessionController.createSession);
 
 router
   .route('/:id')

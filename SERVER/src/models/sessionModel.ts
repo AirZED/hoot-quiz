@@ -1,14 +1,17 @@
 import mongoose, { Document } from 'mongoose';
+import generateSessionCode from '../utils/generateSessionCode';
 
 export interface ISession extends Document {
   startTime: Date;
   endTime: Date;
   creatorId: typeof mongoose.Schema.ObjectId;
   active: boolean;
+  code?: string;
 }
 
 const sessionSchema = new mongoose.Schema<ISession>(
   {
+    code: { type: String, required: true },
     startTime: {
       type: Date,
       required: [true, 'A session must have a start time'],
@@ -31,6 +34,24 @@ const sessionSchema = new mongoose.Schema<ISession>(
   },
 );
 
+sessionSchema.pre<ISession>('save', async function (this: ISession, next) {
+  // generate new session code
+  const sessionCode = generateSessionCode();
+
+  console.log(sessionCode)
+
+  // check if code already exist
+  const existingSession = await (Session as mongoose.Model<ISession>).findOne({
+    code: sessionCode,
+  });
+
+  // carrys out the entire process if code already exist
+  if (existingSession) {
+    return next();
+  }
+  this.code = sessionCode;
+  next();
+});
 const Session = mongoose.model<ISession>('Session', sessionSchema);
 
 export default Session;

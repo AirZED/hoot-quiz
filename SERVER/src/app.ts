@@ -8,7 +8,7 @@ const app = express();
 
 // log morgan
 // if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+app.use(morgan('dev'));
 // }
 
 // parse the body
@@ -19,9 +19,9 @@ import userRoute from './routes/userRoute';
 import questionRoute from './routes/questionRoute';
 import sessionRoute from './routes/sessionRoute';
 
-app.use('/api/v1/user', userRoute);
-app.use('/api/v1/question', questionRoute);
-app.use('/api/v1/session', sessionRoute);
+app.use('api/v1/user', userRoute);
+app.use('api/v1/question', questionRoute);
+app.use('api/v1/session', sessionRoute);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('api is running on live port');

@@ -6,6 +6,27 @@ import { CustomRequest } from './authController';
 import sendReponse from '../utils/sendReponse';
 
 class SessionController {
+  createSession: RequestHandler = catchAsync(
+    async (req: CustomRequest, res, next) => {
+      console.log('Hmmm');
+      const { startTime, endTime } = req.body;
+      const creatorId = req.user?.id;
+
+      const session = await Session.create({
+        startTime,
+        endTime,
+        creatorId,
+      });
+
+      console.log(session);
+
+      if (!session) {
+        return next(new AppError('Session creation otilored', 400));
+      }
+
+      sendReponse(res, 201, session);
+    },
+  );
   startSession: RequestHandler = catchAsync(async (req, res, next) => {
     const { id } = req.body;
     // find a session
@@ -70,24 +91,6 @@ class SessionController {
 
       if (!session) {
         return next(new AppError('Session not found', 404));
-      }
-
-      sendReponse(res, 201, session);
-    },
-  );
-  addSession: RequestHandler = catchAsync(
-    async (req: CustomRequest, res, next) => {
-      const { startTime, endTime } = req.body;
-      const creatorId = req.user?.id;
-
-      const session = await Session.create({
-        startTime,
-        endTime,
-        creatorId,
-      });
-
-      if (!session) {
-        return next(new AppError('Session creation otilored', 400));
       }
 
       sendReponse(res, 201, session);
