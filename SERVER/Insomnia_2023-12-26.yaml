@@ -1,0 +1,254 @@
+_type: export
+__export_format: 4
+__export_date: 2023-12-26T04:05:44.067Z
+__export_source: insomnia.desktop.app:v8.5.1
+resources:
+  - _id: req_0910e57562984c919557c573a626fce9
+    parentId: fld_1b5ed2035391470b930674bfe821270b
+    modified: 1703563247431
+    created: 1703562193549
+    url: http://localhost:8080/api/v1/question
+    name: Create Question
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"question": "Love is a ___ activity",
+           "options": ["rubbish", "best", "amazing", "lovely"],
+            "answer": "rubbish",
+           "sessionId": "658a2232faf860803844f980"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.5.1
+    authentication:
+      type: bearer
+      token: '{{ _.jwt }}'
+      prefix: Bearer
+    metaSortKey: -1703562149554
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_1b5ed2035391470b930674bfe821270b
+    parentId: wrk_f07f6293ad98495bbbeafab694c7c3d5
+    modified: 1703562141859
+    created: 1703562141859
+    name: Questions
+    description: ''
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1703562141859
+    _type: request_group
+  - _id: wrk_f07f6293ad98495bbbeafab694c7c3d5
+    parentId: null
+    modified: 1702151763151
+    created: 1702151763151
+    name: airline app
+    description: ''
+    scope: collection
+    _type: workspace
+  - _id: req_c4d2e70e14cf47119014c59000533d76
+    parentId: fld_1b5ed2035391470b930674bfe821270b
+    modified: 1703563296317
+    created: 1703562146881
+    url: http://localhost:8080/api/v1/question/get_questions_by_session/658a2232faf860803844f980
+    name: Get Questions
+    description: ''
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.5.1
+    authentication:
+      type: bearer
+      token: '{{ _.jwt }}'
+      prefix: Bearer
+    metaSortKey: -1703562149454
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_c1a6e58590f4467196758c686e0ab61e
+    parentId: fld_18a37a1015aa4c0cb5633667461ebea7
+    modified: 1703551225160
+    created: 1702151786657
+    url: http://localhost:8080/api/v1/session
+    name: Create Session
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        "startTime": "1703466280740",
+        "endTime": "1703466280740"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.4.5
+    authentication:
+      type: bearer
+      token: '{{ _.jwt }}'
+      prefix: Bearer
+      disabled: false
+    metaSortKey: -1703551225085
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_18a37a1015aa4c0cb5633667461ebea7
+    parentId: wrk_f07f6293ad98495bbbeafab694c7c3d5
+    modified: 1703551216440
+    created: 1703551216440
+    name: session
+    description: ''
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1703551216440
+    _type: request_group
+  - _id: req_92b41bcf83144a0e8b3c0120845f9858
+    parentId: fld_18a37a1015aa4c0cb5633667461ebea7
+    modified: 1703562115383
+    created: 1703562077825
+    url: http://localhost:8080/api/v1/session
+    name: Get session
+    description: ''
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.5.1
+    authentication:
+      type: bearer
+      token: '{{ _.jwt }}'
+      prefix: Bearer
+    metaSortKey: -1703551224985
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_563e21e89f85480091fe9cb0dd06fd6a
+    parentId: fld_03abe50721ee46c48fa9a935d3afdac7
+    modified: 1703551203076
+    created: 1702424958372
+    url: http://localhost:8080/api/v1/user/signup
+    name: Signup
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "Mfoniso",
+              "email": "test@gmail.com",
+              "password": "1111111111",
+              "passwordConfirm": "1111111111",
+              "role": "user"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.4.5
+    authentication: {}
+    metaSortKey: -1703551197351
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_03abe50721ee46c48fa9a935d3afdac7
+    parentId: wrk_f07f6293ad98495bbbeafab694c7c3d5
+    modified: 1703551188489
+    created: 1703551188489
+    name: auth
+    description: ''
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1703551188489
+    _type: request_group
+  - _id: req_d700d2ebdef646349ef6634574389a79
+    parentId: fld_03abe50721ee46c48fa9a935d3afdac7
+    modified: 1703551197335
+    created: 1703550733405
+    url: http://localhost:8080/api/v1/user/login
+    name: Login
+    description: ''
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+
+              "email": "test@gmail.com",
+              "password": "1111111111"
+        	
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.5.1
+    authentication: {}
+    metaSortKey: -1703551197251
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_091a4a71ba30d01b071ba2f926b2645545b4cfea
+    parentId: wrk_f07f6293ad98495bbbeafab694c7c3d5
+    modified: 1703551111567
+    created: 1702151763179
+    name: Base Environment
+    data:
+      jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OGEyMDNmNDBkM2E3OTVlMmY0OWE5ZSIsImlhdCI6MTcwMzU1MTA0NSwiZXhwIjoxNzAzNjM3NDQ1fQ.HB1yNzbsVunCib2G3gxFv-EBdNaJHptydHZ5itJSQfU
+    dataPropertyOrder:
+      '&':
+        - jwt
+    color: null
+    isPrivate: false
+    metaSortKey: 1702151763179
+    _type: environment
+  - _id: jar_091a4a71ba30d01b071ba2f926b2645545b4cfea
+    parentId: wrk_f07f6293ad98495bbbeafab694c7c3d5
+    modified: 1702151763187
+    created: 1702151763187
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
