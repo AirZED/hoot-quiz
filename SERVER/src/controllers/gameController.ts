@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express';
 import catchAsync from '../utils/catchAsync';
 import TempUser from '../models/tempUserModel';
-import Session, { ISession } from '../models/sessionModel';
+import Session from '../models/sessionModel';
 import AppError from '../utils/appError';
+import sendReponse from '../utils/sendReponse';
 
 class GameController {
   startGame: RequestHandler = catchAsync(async (req, res, next) => {
@@ -24,6 +25,8 @@ class GameController {
       name: playerName,
       session_id: session?.id,
     });
+
+    sendReponse(res, 201, tempUser);
   });
 
   evaluateGame: RequestHandler = catchAsync(async (req, res, next) => {

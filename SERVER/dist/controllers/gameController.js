@@ -16,6 +16,7 @@ const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
 const tempUserModel_1 = __importDefault(require("../models/tempUserModel"));
 const sessionModel_1 = __importDefault(require("../models/sessionModel"));
 const appError_1 = __importDefault(require("../utils/appError"));
+const sendReponse_1 = __importDefault(require("../utils/sendReponse"));
 class GameController {
     constructor() {
         this.startGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -34,6 +35,7 @@ class GameController {
                 name: playerName,
                 session_id: session === null || session === void 0 ? void 0 : session.id,
             });
+            (0, sendReponse_1.default)(res, 201, tempUser);
         }));
         this.evaluateGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             // manage a game round
