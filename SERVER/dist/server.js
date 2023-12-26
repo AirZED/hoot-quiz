@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config({ path: '.env' });
 const http_1 = require("http"); // Change to use the http module
 const socket_io_1 = require("socket.io");
-dotenv_1.default.config({ path: './../.env' });
 const db_1 = __importDefault(require("./db"));
 const app_1 = __importDefault(require("./app"));
 const httpServer = (0, http_1.createServer)(app_1.default); // Create an HTTP server

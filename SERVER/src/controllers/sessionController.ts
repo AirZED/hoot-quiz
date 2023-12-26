@@ -8,17 +8,18 @@ import sendReponse from '../utils/sendReponse';
 class SessionController {
   createSession: RequestHandler = catchAsync(
     async (req: CustomRequest, res, next) => {
-      console.log('Hmmm');
       const { startTime, endTime } = req.body;
       const creatorId = req.user?.id;
+
+      if (!creatorId) {
+        return next(new AppError('Login to continue', 400));
+      }
 
       const session = await Session.create({
         startTime,
         endTime,
         creatorId,
       });
-
-      console.log(session);
 
       if (!session) {
         return next(new AppError('Session creation otilored', 400));

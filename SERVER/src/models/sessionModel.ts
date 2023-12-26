@@ -11,7 +11,7 @@ export interface ISession extends Document {
 
 const sessionSchema = new mongoose.Schema<ISession>(
   {
-    code: { type: String, required: true },
+    code: { type: String },
     startTime: {
       type: Date,
       required: [true, 'A session must have a start time'],
@@ -34,14 +34,12 @@ const sessionSchema = new mongoose.Schema<ISession>(
   },
 );
 
-sessionSchema.pre<ISession>('save', async function (this: ISession, next) {
+sessionSchema.pre('save', async function (this: ISession, next) {
   // generate new session code
   const sessionCode = generateSessionCode();
 
-  console.log(sessionCode)
-
   // check if code already exist
-  const existingSession = await (Session as mongoose.Model<ISession>).findOne({
+  const existingSession = await Session.findOne({
     code: sessionCode,
   });
 

@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
+
+
 import { createServer } from 'http'; // Change to use the http module
 import { Server } from 'socket.io';
-
-dotenv.config({ path: './../.env' });
 
 import db from './db';
 import app from './app';

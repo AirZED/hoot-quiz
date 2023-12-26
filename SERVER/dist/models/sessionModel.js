@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const generateSessionCode_1 = __importDefault(require("../utils/generateSessionCode"));
 const sessionSchema = new mongoose_1.default.Schema({
-    code: { type: String, required: true },
+    code: { type: String },
     startTime: {
         type: Date,
         required: [true, 'A session must have a start time'],
@@ -39,7 +39,6 @@ sessionSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         // generate new session code
         const sessionCode = (0, generateSessionCode_1.default)();
-        console.log(sessionCode);
         // check if code already exist
         const existingSession = yield Session.findOne({
             code: sessionCode,

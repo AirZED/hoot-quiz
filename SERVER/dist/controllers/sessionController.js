@@ -20,15 +20,16 @@ class SessionController {
     constructor() {
         this.createSession = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             var _a;
-            console.log('Hmmm');
             const { startTime, endTime } = req.body;
             const creatorId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+            if (!creatorId) {
+                return next(new appError_1.default('Login to continue', 400));
+            }
             const session = yield sessionModel_1.default.create({
                 startTime,
                 endTime,
                 creatorId,
             });
-            console.log(session);
             if (!session) {
                 return next(new appError_1.default('Session creation otilored', 400));
             }
