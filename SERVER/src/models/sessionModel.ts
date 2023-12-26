@@ -7,6 +7,7 @@ export interface ISession extends Document {
   creatorId: typeof mongoose.Schema.ObjectId;
   active: boolean;
   code?: string;
+  id?: string | null;
 }
 
 const sessionSchema = new mongoose.Schema<ISession>(

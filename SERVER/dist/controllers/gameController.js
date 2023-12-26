@@ -13,6 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
+const tempUserModel_1 = __importDefault(require("../models/tempUserModel"));
+const sessionModel_1 = __importDefault(require("../models/sessionModel"));
+const appError_1 = __importDefault(require("../utils/appError"));
 class GameController {
     constructor() {
         this.startGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -20,6 +23,17 @@ class GameController {
         }));
         this.addGamePlayers = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             // create temp_users adding them to the game
+            // enter session code and name
+            const { sessionCode } = req.params;
+            const { playerName } = req.body;
+            const session = yield sessionModel_1.default.findOne({ code: sessionCode });
+            if (!session) {
+                return next(new appError_1.default('The session is not valid!', 404));
+            }
+            const tempUser = yield tempUserModel_1.default.create({
+                name: playerName,
+                session_id: session === null || session === void 0 ? void 0 : session.id,
+            });
         }));
         this.evaluateGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             // manage a game round

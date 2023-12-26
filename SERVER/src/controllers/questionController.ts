@@ -9,7 +9,7 @@ class QuestionController {
   addQuestion: RequestHandler = catchAsync(
     async (req: CustomRequest, res, next) => {
       const { question, options, answer, sessionId } = req.body;
-
+      
       const creatorId = req.user?.id;
 
       const quiz: IQuestion = await Question.create({
