@@ -31,5 +31,5 @@ const tempUserSchema = new mongoose_1.default.Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
 });
-const TempUser = mongoose_1.default.model('Session', tempUserSchema);
+const TempUser = mongoose_1.default.model('TempUser', tempUserSchema);
 exports.default = TempUser;

@@ -18,10 +18,12 @@ app.use(express.json({ limit: '10kb' }));
 import userRoute from './routes/userRoute';
 import questionRoute from './routes/questionRoute';
 import sessionRoute from './routes/sessionRoute';
+import gameRoute from './routes/gameRoutes';
 
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/question', questionRoute);
 app.use('/api/v1/session', sessionRoute);
+app.use('/api/v1/game', gameRoute);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('api is running on live port');

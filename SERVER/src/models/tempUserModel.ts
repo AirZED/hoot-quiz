@@ -38,6 +38,6 @@ const tempUserSchema = new mongoose.Schema<ITempUser>(
   },
 );
 
-const TempUser = mongoose.model<ITempUser>('Session', tempUserSchema);
+const TempUser = mongoose.model<ITempUser>('TempUser', tempUserSchema);
 
 export default TempUser;

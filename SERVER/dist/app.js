@@ -19,9 +19,11 @@ app.use(express_1.default.json({ limit: '10kb' }));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const questionRoute_1 = __importDefault(require("./routes/questionRoute"));
 const sessionRoute_1 = __importDefault(require("./routes/sessionRoute"));
+const gameRoutes_1 = __importDefault(require("./routes/gameRoutes"));
 app.use('/api/v1/user', userRoute_1.default);
 app.use('/api/v1/question', questionRoute_1.default);
 app.use('/api/v1/session', sessionRoute_1.default);
+app.use('/api/v1/game', gameRoutes_1.default);
 app.get('/', (req, res) => {
     res.send('api is running on live port');
 });
