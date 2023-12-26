@@ -59,10 +59,13 @@ class QuestionController {
             }
             res.status(201).json({ status: 'success', question });
         }));
-        this.getAllQuestions = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.getAllQuestionsBySession = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             var _d;
+            //You need both user id and session id to get questions
             const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.id;
-            const questions = yield questionModel_1.default.find({ creatorId: userId });
+            const { sessionId } = req.params;
+            console.log(sessionId);
+            const questions = yield questionModel_1.default.find({ creatorId: userId, sessionId });
             if (!questions) {
                 return next(new appError_1.default('Questions not found', 404));
             }

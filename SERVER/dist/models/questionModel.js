@@ -20,7 +20,7 @@ const questionSchema = new mongoose_1.default.Schema({
         required: [true, 'Question must have a question'],
     },
     options: {
-        type: [{ type: String || Number, trim: true }],
+        type: [{ type: String || Number || Boolean, trim: true }],
         validate: {
             validator: function (options) {
                 return options.length <= 4 && options.length > 1;

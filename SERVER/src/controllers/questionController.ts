@@ -66,10 +66,14 @@ class QuestionController {
     },
   );
 
-  getAllQuestions: RequestHandler = catchAsync(
+  getAllQuestionsBySession: RequestHandler = catchAsync(
     async (req: CustomRequest, res, next) => {
+      //You need both user id and session id to get questions
       const userId = req.user?.id;
-      const questions = await Question.find({ creatorId: userId });
+      const { sessionId } = req.params;
+
+      console.log(sessionId);
+      const questions = await Question.find({ creatorId: userId, sessionId });
 
       if (!questions) {
         return next(new AppError('Questions not found', 404));
