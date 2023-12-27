@@ -8,9 +8,16 @@ export default function Home() {
 
   const handleSocketConnection = () => {
 
-    console.log('Button has been clicked')
     const socket = getSocket();
-    socket.emit('sendMessage', 'Hello WebSocket!');
+
+    try {
+      socket.emit('sendMessage', 'Hello WebSocket!');
+
+      console.log('hmm')
+    } catch (error) {
+      console.error('Error emitting message:', error);
+      console.log('haa')
+    }
 
   }
   useEffect(() => {

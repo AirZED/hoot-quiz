@@ -7,12 +7,13 @@ export interface ISession extends Document {
   creatorId: typeof mongoose.Schema.ObjectId;
   active: boolean;
   code?: string;
-  id?: string | null;
+  amountOfPlayers: number;
 }
 
 const sessionSchema = new mongoose.Schema<ISession>(
   {
     code: { type: String },
+    amountOfPlayers: Number,
     startTime: {
       type: Date,
       required: [true, 'A session must have a start time'],
@@ -34,11 +35,21 @@ const sessionSchema = new mongoose.Schema<ISession>(
     toObject: { virtuals: true },
   },
 );
+// set and initial value of zero to number of players when the schema is created
+sessionSchema.pre('save', function (this: ISession, next) {
+  if (this.isNew) {
+    this.amountOfPlayers = 0;
+    next();
+  }
+
+  next();
+});
 
 sessionSchema.pre('save', async function (this: ISession, next) {
+  if (!this.isNew) next();
+
   // generate new session code
   const sessionCode = generateSessionCode();
-
   // check if code already exist
   const existingSession = await Session.findOne({
     code: sessionCode,
@@ -51,6 +62,7 @@ sessionSchema.pre('save', async function (this: ISession, next) {
   this.code = sessionCode;
   next();
 });
+
 const Session = mongoose.model<ISession>('Session', sessionSchema);
 
 export default Session;

@@ -16,6 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const generateSessionCode_1 = __importDefault(require("../utils/generateSessionCode"));
 const sessionSchema = new mongoose_1.default.Schema({
     code: { type: String },
+    amountOfPlayers: Number,
     startTime: {
         type: Date,
         required: [true, 'A session must have a start time'],
@@ -35,8 +36,18 @@ const sessionSchema = new mongoose_1.default.Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
 });
+// set and initial value of zero to number of players when the schema is created
+sessionSchema.pre('save', function (next) {
+    if (this.isNew) {
+        this.amountOfPlayers = 0;
+        next();
+    }
+    next();
+});
 sessionSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!this.isNew)
+            next();
         // generate new session code
         const sessionCode = (0, generateSessionCode_1.default)();
         // check if code already exist

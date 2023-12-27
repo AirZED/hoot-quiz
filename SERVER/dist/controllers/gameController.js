@@ -31,6 +31,10 @@ class GameController {
             if (!session) {
                 return next(new appError_1.default('The session is not valid!', 404));
             }
+            // increment number of players
+            session.amountOfPlayers++;
+            console.log(session);
+            yield session.save({ validateBeforeSave: false });
             const tempUser = yield tempUserModel_1.default.create({
                 name: playerName,
                 session_id: session === null || session === void 0 ? void 0 : session.id,

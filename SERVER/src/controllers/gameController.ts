@@ -21,6 +21,11 @@ class GameController {
       return next(new AppError('The session is not valid!', 404));
     }
 
+    // increment number of players
+    session.amountOfPlayers++;
+    console.log(session);
+    await session.save({ validateBeforeSave: false });
+
     const tempUser = await TempUser.create({
       name: playerName,
       session_id: session?.id,
