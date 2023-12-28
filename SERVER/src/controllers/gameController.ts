@@ -37,24 +37,35 @@ class GameController {
   submitGame: RequestHandler = catchAsync(async (req, res, next) => {
     const { playerId: id } = req.params;
     const player = await TempUser.findById(id);
+
+    if (!player) {
+      return next('Player not found');
+    }
+
+    const score = await this.calculateScore(req);
+
+    player.score += score;
+    await player.save();
+
+    console.log(player);
+
+    sendReponse(res, 201, null, 'success');
   });
 
-  private calculateScore = async (req: Request) => {
+  private calculateScore = async (req: Request): Promise<number> => {
     const maxScore = 100;
     const timeLimitInSeconds = 60;
 
-    if (await this.answerIsCorrect(req)) {
-      const timeDifferenceInSeconds = Date.now() / 1000;
-
-      const timeScore = Math.max(
-        0,
-        maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore,
-      );
-
-      return Math.round(timeScore);
-    } else {
-      return 0; // If the answer is incorrect, assign a score of 0
+    if (!(await this.answerIsCorrect(req))) {
+      return 0;
     }
+
+    const timeDifferenceInSeconds = Date.now() / 1000;
+    const timeScore = Math.max(
+      0,
+      maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore,
+    );
+    return Math.round(timeScore);
   };
 
   private answerIsCorrect = async (req: Request): Promise<boolean> => {

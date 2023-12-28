@@ -44,18 +44,24 @@ class GameController {
         this.submitGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { playerId: id } = req.params;
             const player = yield tempUserModel_1.default.findById(id);
+            if (!player) {
+                return next('Player not found');
+            }
+            const score = yield this.calculateScore(req);
+            player.score += score;
+            yield player.save();
+            console.log(player);
+            (0, sendReponse_1.default)(res, 201, null, 'success');
         }));
         this.calculateScore = (req) => __awaiter(this, void 0, void 0, function* () {
             const maxScore = 100;
             const timeLimitInSeconds = 60;
-            if (yield this.answerIsCorrect(req)) {
-                const timeDifferenceInSeconds = Date.now() / 1000;
-                const timeScore = Math.max(0, maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore);
-                return Math.round(timeScore);
+            if (!(yield this.answerIsCorrect(req))) {
+                return 0;
             }
-            else {
-                return 0; // If the answer is incorrect, assign a score of 0
-            }
+            const timeDifferenceInSeconds = Date.now() / 1000;
+            const timeScore = Math.max(0, maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore);
+            return Math.round(timeScore);
         });
         this.answerIsCorrect = (req) => __awaiter(this, void 0, void 0, function* () {
             // sessionId, playerId, questionId, answer
