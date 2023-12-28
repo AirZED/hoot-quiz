@@ -45,13 +45,14 @@ class GameController {
             const { playerId: id } = req.params;
             const player = yield tempUserModel_1.default.findById(id);
             if (!player) {
-                return next('Player not found');
+                return next(new appError_1.default('Player not found', 404));
             }
             const score = yield this.calculateScore(req);
+            console.log(score);
             player.score += score;
             yield player.save();
             console.log(player);
-            (0, sendReponse_1.default)(res, 201, null, 'success');
+            (0, sendReponse_1.default)(res, 201, player, 'success');
         }));
         this.calculateScore = (req) => __awaiter(this, void 0, void 0, function* () {
             const maxScore = 100;
@@ -60,15 +61,14 @@ class GameController {
                 return 0;
             }
             const timeDifferenceInSeconds = Date.now() / 1000;
-            const timeScore = Math.max(0, maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore);
+            const timeScore = maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore;
             return Math.round(timeScore);
         });
         this.answerIsCorrect = (req) => __awaiter(this, void 0, void 0, function* () {
-            // sessionId, playerId, questionId, answer
-            const { answer, playerId, questionId, sessionId } = req.body;
+            const { answer, questionId, sessionId } = req.body;
             const question = yield questionModel_1.default.findOne({
                 answer,
-                id: questionId,
+                _id: questionId,
                 sessionId,
                 answered: false,
             });

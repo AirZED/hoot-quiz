@@ -11,6 +11,8 @@ const tempUserSchema = new mongoose.Schema<ITempUser>(
   {
     name: {
       type: String,
+      unique: true,
+      trim: true,
       required: [true, 'A temp user must have a name'],
     },
     score: {
@@ -37,6 +39,15 @@ const tempUserSchema = new mongoose.Schema<ITempUser>(
     toObject: { virtuals: true },
   },
 );
+
+tempUserSchema.pre('save', function (this: ITempUser, next) {
+  if (!this.isNew) {
+    next();
+  }
+
+  this.score = 0;
+  next();
+});
 
 const TempUser = mongoose.model<ITempUser>('TempUser', tempUserSchema);
 

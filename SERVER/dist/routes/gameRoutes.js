@@ -9,8 +9,8 @@ const authController_1 = __importDefault(require("../controllers/authController"
 const router = (0, express_1.Router)();
 // importing authController
 router.route('/:sessionCode').get(gameController_1.default.addGamePlayers);
+router.post('/submit/:playerId', gameController_1.default.submitGame);
 // add a protect middleware for this routes
 router.use(authController_1.default.protect);
 router.post('/start/:sessionId', gameController_1.default.startGame);
-router.post('/evaluate/:sessionId', gameController_1.default.submitGame);
 exports.default = router;

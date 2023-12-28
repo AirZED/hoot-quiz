@@ -7,6 +7,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const tempUserSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
+        unique: true,
+        trim: true,
         required: [true, 'A temp user must have a name'],
     },
     score: {
@@ -30,6 +32,13 @@ const tempUserSchema = new mongoose_1.default.Schema({
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+});
+tempUserSchema.pre('save', function (next) {
+    if (!this.isNew) {
+        next();
+    }
+    this.score = 0;
+    next();
 });
 const TempUser = mongoose_1.default.model('TempUser', tempUserSchema);
 exports.default = TempUser;

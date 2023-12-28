@@ -39,17 +39,19 @@ class GameController {
     const player = await TempUser.findById(id);
 
     if (!player) {
-      return next('Player not found');
+      return next(new AppError('Player not found', 404));
     }
 
     const score = await this.calculateScore(req);
+
+    console.log(score);
 
     player.score += score;
     await player.save();
 
     console.log(player);
 
-    sendReponse(res, 201, null, 'success');
+    sendReponse(res, 201, player, 'success');
   });
 
   private calculateScore = async (req: Request): Promise<number> => {
@@ -61,23 +63,22 @@ class GameController {
     }
 
     const timeDifferenceInSeconds = Date.now() / 1000;
-    const timeScore = Math.max(
-      0,
-      maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore,
-    );
+    const timeScore =
+      maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore;
+
     return Math.round(timeScore);
   };
 
   private answerIsCorrect = async (req: Request): Promise<boolean> => {
-    // sessionId, playerId, questionId, answer
-    const { answer, playerId, questionId, sessionId } = req.body;
+    const { answer, questionId, sessionId } = req.body;
 
     const question = await Question.findOne({
       answer,
-      id: questionId,
+      _id: questionId,
       sessionId,
       answered: false,
     });
+
     if (!question) {
       return false;
     }
