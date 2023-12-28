@@ -7,6 +7,7 @@ export interface IQuestion extends Document {
   answer: string | number | boolean;
   creatorId: typeof mongoose.Schema.ObjectId;
   sessionId: typeof mongoose.Schema.ObjectId;
+  answered: Boolean;
 }
 
 const questionSchema = new mongoose.Schema<IQuestion>(
@@ -44,6 +45,7 @@ const questionSchema = new mongoose.Schema<IQuestion>(
         message: 'Answer must be included in options',
       },
     },
+    answered: { type: Boolean, default: false },
   },
   {
     timestamps: true,

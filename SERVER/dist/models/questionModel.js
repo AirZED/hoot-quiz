@@ -38,6 +38,7 @@ const questionSchema = new mongoose_1.default.Schema({
             message: 'Answer must be included in options',
         },
     },
+    answered: { type: Boolean, default: false },
 }, {
     timestamps: true,
     toJSON: { virtuals: true },

@@ -17,6 +17,7 @@ const tempUserModel_1 = __importDefault(require("../models/tempUserModel"));
 const sessionModel_1 = __importDefault(require("../models/sessionModel"));
 const appError_1 = __importDefault(require("../utils/appError"));
 const sendReponse_1 = __importDefault(require("../utils/sendReponse"));
+const questionModel_1 = __importDefault(require("../models/questionModel"));
 class GameController {
     constructor() {
         this.startGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -33,7 +34,6 @@ class GameController {
             }
             // increment number of players
             session.amountOfPlayers++;
-            console.log(session);
             yield session.save({ validateBeforeSave: false });
             const tempUser = yield tempUserModel_1.default.create({
                 name: playerName,
@@ -41,9 +41,36 @@ class GameController {
             });
             (0, sendReponse_1.default)(res, 201, tempUser);
         }));
-        this.evaluateGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            // manage a game round
+        this.submitGame = (0, catchAsync_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const { playerId: id } = req.params;
+            const player = yield tempUserModel_1.default.findById(id);
         }));
+        this.calculateScore = (req) => __awaiter(this, void 0, void 0, function* () {
+            const maxScore = 100;
+            const timeLimitInSeconds = 60;
+            if (yield this.answerIsCorrect(req)) {
+                const timeDifferenceInSeconds = Date.now() / 1000;
+                const timeScore = Math.max(0, maxScore - (timeDifferenceInSeconds / timeLimitInSeconds) * maxScore);
+                return Math.round(timeScore);
+            }
+            else {
+                return 0; // If the answer is incorrect, assign a score of 0
+            }
+        });
+        this.answerIsCorrect = (req) => __awaiter(this, void 0, void 0, function* () {
+            // sessionId, playerId, questionId, answer
+            const { answer, playerId, questionId, sessionId } = req.body;
+            const question = yield questionModel_1.default.findOne({
+                answer,
+                id: questionId,
+                sessionId,
+                answered: false,
+            });
+            if (!question) {
+                return false;
+            }
+            return true;
+        });
     }
 }
 exports.default = new GameController();
