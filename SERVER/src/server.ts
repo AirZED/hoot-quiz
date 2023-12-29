@@ -1,34 +1,48 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 
-
 import { createServer } from 'http'; // Change to use the http module
-import { Server } from 'socket.io';
+import WebSocket from 'ws';
 
 import db from './db';
 import app from './app';
+const server = createServer(app);
+const wss = new WebSocket.Server({ server });
 
-const httpServer = createServer(app); // Create an HTTP server
-const io = new Server(httpServer, {
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
-}); // Attach socket.io to the http server
+wss.on('connection', (ws) => {
+  console.log('Client connected');
 
-const port = process.env.PORT || 3000;
+  ws.on('message', (message) => {
+    if (typeof message === 'string') {
+      // Handle text message
+      console.log(`Received text message: ${message}`);
 
-db();
+      // Parse the message if needed
+      const parsedMessage = JSON.parse(message);
 
-// test websocket connection
-io.on('connection', (socket) => {
-  console.log('a user connected');
+      // Handle the message based on its content
+      if (parsedMessage.action === 'sendMessage') {
+        console.log('Received a sendMessage action:', parsedMessage.content);
+      }
+    } else if (message instanceof Buffer) {
+      // Handle binary message (if needed)
+      console.log('Received binary message:', message);
+    }
+  });
 
-  socket.on('sendMessage', (message) => {
-    console.log('Received message:', message);
+  ws.on('close', () => {
+    console.log('Client disconnected');
   });
 });
 
-httpServer.listen(port, () => {
+app.use((req, res) => {
+  res.send('WebSocket server is running!');
+});
+
+db();
+
+const port = process.env.PORT || 3000;
+
+server.listen(port, () => {
   console.log(`Server has started on port ${port}`);
 });
