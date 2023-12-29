@@ -6,7 +6,13 @@ const JoinGame = (): ReactElement => {
 
     const joinGameHandler = (e: FormEvent): void => {
         e.preventDefault()
-        webSocketService.sendMessage('Joined');
+
+        const data = {
+            action: 'sendMessage',
+            content: 'Hello, server!',
+        };
+
+        webSocketService.sendMessage(JSON.stringify(data));
         console.log('joined game')
     }
     return <div className="w-full h-screen flex items-center justify-center">
