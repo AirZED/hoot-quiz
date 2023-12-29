@@ -1,9 +1,14 @@
 import './App.css'
+import JoinGame from './pages/JoinGame'
 
 const App = () => {
 
+
   return (
-    <div></div>
+    <div className='bg-white min-h-screen w-full'>
+
+      <JoinGame />
+    </div>
   )
 }
 
