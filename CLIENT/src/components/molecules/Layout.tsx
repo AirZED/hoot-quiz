@@ -2,7 +2,11 @@ import { ReactElement, Fragment } from "react";
 import Footer from "./Footer";
 import Nav from "./Nav";
 
-const Layout = ({ children }: ReactElement): ReactElement => {
+type LayoutProps = {
+  children: React.ReactNode;
+};
+
+const Layout = ({ children }: LayoutProps): ReactElement => {
   return (
     <Fragment>
       <div className="min-h-screen flex justify-between flex-col">
